@@ -4,12 +4,12 @@ import numpy as np
 import torch
 import xarray as xr
 
-from auroraencoder._typing import TYPE_CHECKING
-from auroraencoder.utils.constants import LEVELS, VARS
-from auroraencoder.utils.datasets import get_step_dataset, get_init_dataset, read_edh
-from auroraencoder.utils.latlon import reduce_lon_lat
-from auroraencoder.utils.models import get_aurora_batch, get_aurora_model, run_encoder
-from auroraencoder.utils.parsers import get_gen_embeddings_parser
+from auroraencoderanalysis._typing import TYPE_CHECKING
+from auroraencoderanalysis.utils.constants import LEVELS, VARS
+from auroraencoderanalysis.utils.datasets import get_step_dataset, get_init_dataset, read_edh
+from auroraencoderanalysis.utils.latlon import reduce_lon_lat
+from auroraencoderanalysis.utils.models import get_aurora_batch, get_aurora_model, run_encoder
+from auroraencoderanalysis.utils.parsers import get_gen_embeddings_parser
 
 if TYPE_CHECKING:
     from auroraencoder._typing import ArgumentParser
