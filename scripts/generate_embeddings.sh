@@ -2,7 +2,7 @@
 
 # Local paths
 HOME_DIR="/home/benjamin"
-MODULE_DIR="${HOME_DIR}/auroraencoder"
+MODULE_DIR="${HOME_DIR}/auroraencoderanalysis"
 
 # Path to catch errors
 OUTPUT_FILE="${MODULE_DIR}/outputs/generate_embeddings.out"
