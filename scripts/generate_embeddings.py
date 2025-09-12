@@ -54,7 +54,7 @@ def generate_embeddings(arg_parser: ArgumentParser) -> None:
     lats = patch_center_lat.T[0]
     lons = patch_center_lon[0]
     n_levels = arg_parser.n_embed_levels
-    output_ds = get_init_dataset(n_embed, n_lats, lats, n_lons)
+    output_ds = get_init_dataset(n_embed, n_levels, lats, lons)
     output_ds.to_zarr(arg_parser.output_zarr_path, mode="w")
 
     # Main loop to download data, run encoding and export zarr
