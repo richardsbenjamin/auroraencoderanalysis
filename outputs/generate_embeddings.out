@@ -1,0 +1,96 @@
+  [2m2025-09-11T21:55:02.231926Z[0m [33m WARN[0m  [33mStatus Code: 500. Retrying..., [1;33mrequest_id[0m[33m: "01K4XCCK3B5392AE22YYTBWHQG"[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T21:55:02.232089Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 196.043447ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:03:58.738534Z[0m [33m WARN[0m  [33mStatus Code: 500. Retrying..., [1;33mrequest_id[0m[33m: "01K4XCWZ18P224E8F8RMT359XD"[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:03:58.738632Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 1.252699571s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:05:48.746413Z[0m [33m WARN[0m  [33mStatus Code: 500. Retrying..., [1;33mrequest_id[0m[33m: "01K4XD090WSZS3D5MKRPET4Y71"[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:05:48.746536Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 701.855955ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:52.599797Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:52.599926Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 909.277619ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:53.070005Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:53.070063Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 2.347198073s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:53.233137Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:53.233265Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 676.232374ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:53.820646Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:53.820803Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 12.177778ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:53.917562Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:53.917664Z[0m [33m WARN[0m  [33mRetry attempt #1. Sleeping 3.765912389s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:55.017284Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:55.017421Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 2.570476936s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:18:55.504622Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:18:55.504745Z[0m [33m WARN[0m  [33mRetry attempt #1. Sleeping 5.142779273s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:21:07.332017Z[0m [33m WARN[0m  [33mStatus Code: 500. Retrying..., [1;33mrequest_id[0m[33m: "01K4XDWA3ANDTQA5AZZGQFF5ES"[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:21:07.332145Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 2.839660621s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:25:56.407859Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:25:56.408024Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 1.770576872s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:25:57.322647Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:25:57.322760Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 178.326033ms before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:25:57.356425Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:25:57.356546Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 1.793831091s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:25:57.594870Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:25:57.595010Z[0m [33m WARN[0m  [33mRetry attempt #1. Sleeping 2.071685389s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
+  [2m2025-09-11T22:25:58.765091Z[0m [33m WARN[0m  [33mStatus Code: 502. Retrying..., [1;33mrequest_id[0m[33m: ""[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/work/cas_client/src/http_client.rs:220
+
+  [2m2025-09-11T22:25:58.765204Z[0m [33m WARN[0m  [33mRetry attempt #0. Sleeping 2.924235148s before the next attempt[0m
+    [2;3mat[0m /croot/hf-xet_1755725946166/_build_env/.cargo.Linux/registry/src/index.crates.io-1949cf8c6b5b557f/reqwest-retry-0.7.0/src/middleware.rs:171
+
