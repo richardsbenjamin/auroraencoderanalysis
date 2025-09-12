@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 def get_init_dataset(
         n_embed: int,
-        n_lats: int,
+        n_levels: int,
         lats: ndarray,
         lons: ndarray,
     ) -> Dataset:
