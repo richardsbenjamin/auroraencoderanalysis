@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 def get_init_dataset(
         n_embed: int,
         n_lats: int,
-        n_lons: int,
-        n_levels: int,
         lats: ndarray,
         lons: ndarray,
     ) -> Dataset:
+    n_lats = len(lats)
+    n_lons = len(lons)
     ds = xr.Dataset(
         {
             "surface_latent": (
