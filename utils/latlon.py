@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from auroraencoder._typing import TYPE_CHECKING
+from auroraencoderanalysis._typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from auroraencoder._typing import ndarray
+    from auroraencoderanalysis._typing import ndarray
 
 def reduce_lon_lat(
         patch_size: int,

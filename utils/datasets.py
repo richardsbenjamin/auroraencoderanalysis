@@ -3,20 +3,20 @@ from __future__ import annotations
 import numpy as np
 import xarray as xr
 
-from auroraencoder._typing import TYPE_CHECKING
+from auroraencoderanalysis._typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from auroraencoder._typing import Dataset, ndarray
+    from auroraencoderanalysis._typing import Dataset, ndarray
 
 
 def get_init_dataset(
         n_embed: int,
-        n_lats: int,
-        n_lons: int,
         n_levels: int,
         lats: ndarray,
         lons: ndarray,
     ) -> Dataset:
+    n_lats = len(lats)
+    n_lons = len(lons)
     ds = xr.Dataset(
         {
             "surface_latent": (
