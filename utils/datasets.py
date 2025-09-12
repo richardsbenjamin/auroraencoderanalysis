@@ -3,10 +3,10 @@ from __future__ import annotations
 import numpy as np
 import xarray as xr
 
-from auroraencoder._typing import TYPE_CHECKING
+from auroraencoderanalysis._typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from auroraencoder._typing import Dataset, ndarray
+    from auroraencoderanalysis._typing import Dataset, ndarray
 
 
 def get_init_dataset(
