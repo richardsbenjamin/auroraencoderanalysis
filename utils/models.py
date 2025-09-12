@@ -6,10 +6,10 @@ import torch
 from aurora import Aurora, Batch, Metadata
 from aurora import rollout as aurora_rollout
 
-from auroraencoder._typing import TYPE_CHECKING
+from auroraencoderanalysis._typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from auroraencoder._typing import Dataset, Device, ndarray
+    from auroraencoderanalysis._typing import Dataset, Device, ndarray
 
 
 def get_aurora_batch(surface_vars: Dataset, static_vars: Dataset, atmos_vars: Dataset) -> Batch:
