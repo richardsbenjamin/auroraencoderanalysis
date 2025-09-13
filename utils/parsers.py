@@ -90,7 +90,29 @@ LAND_SEA_PARSER_ARGS = {
         "required": True,
         "help": "The maximum longitude to define the test region for the logistic regression."
     },
+}
 
+TEMP_EXTREMES_PARSER_ARGS = {
+    "static-path": {
+        "type": str,
+        "required": True,
+        "help": "Path to static inputs file for the Aurora model."
+    },
+    "output-path": {
+        "type": str,
+        "required": True,
+        "help": "Output directory to save images and output data."
+    },
+    "era5-zarr-path": {
+        "type": str,
+        "required": True,
+        "help": "The zarr path for the ERA5 data."
+    },
+    "patch-size": {
+        "type": int,
+        "required": True,
+        "help": "The patch size of the encoder."
+    },
 }
 
 
@@ -116,5 +138,11 @@ def get_land_sea_parser() -> ArgumentParser:
     return get_arg_parser(
         description="Execute land sea analysis on the encoder embeddings.",
         args_dict=LAND_SEA_PARSER_ARGS,
+    )
+
+def get_temp_extremes_parser() -> ArgumentParser:
+    return get_arg_parser(
+        description="Execute land sea analysis on the encoder embeddings.",
+        args_dict=TEMP_EXTREMES_PARSER_ARGS,
     )
 
