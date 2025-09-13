@@ -15,7 +15,7 @@ OUTPUT_ZARR_PATH="gs://aurora-encoder-storage/test_run.zarr"
 
 # Dates
 START_DATE="2022-01-01T00:00"
-END_DATE="2022-01-01T06:00"
+END_DATE="2022-01-06T00:00"
 
 # Encoder variables
 PATCH_SIZE="4"

@@ -59,7 +59,7 @@ def get_step_dataset(
             ),
         },
         coords={
-            "time": ndarray([np.datetime64(batch_time)]),
+            "time": np.array([np.datetime64(batch_time)]),
             "embed": np.arange(n_embed),
             "level": np.arange(n_levels),
             "lat": lats,
