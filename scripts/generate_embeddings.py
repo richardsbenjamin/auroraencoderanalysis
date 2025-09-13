@@ -60,7 +60,7 @@ def generate_embeddings(arg_parser: ArgumentParser) -> None:
     output_ds.to_zarr(arg_parser.output_zarr_path, mode="w")
 
     # Main loop to download data, run encoding and export zarr
-    for batch_start in edh_atmos_data.valid_time:
+    for batch_start in edh_atmos_data.valid_time[:-1]:
         batch_end = batch_start + np.timedelta64(1, "6h")
 
         surf_select = edh_surface_data.sel(valid_time=slice(batch_start, batch_end))
