@@ -12,7 +12,7 @@ from auroraencoderanalysis.utils.models import get_aurora_batch, get_aurora_mode
 from auroraencoderanalysis.utils.parsers import get_gen_embeddings_parser
 
 if TYPE_CHECKING:
-    from auroraencoder._typing import ArgumentParser
+    from auroraencoderanalysis._typing import ArgumentParser
 
 
 def generate_embeddings(arg_parser: ArgumentParser) -> None:
