@@ -17,9 +17,9 @@ You'll need to set up the repository and environemnt on your machine. You'll nee
     conda activate auroralatent-1.0.yml
     ```
 
-Now you're all set! 
+Since the scripts rely on running the Aurora encoder module, you will need around 40GB of RAM. Running the land sea analysis can be done on a CPU with sufficient memory because it only generates one embedding. However, the temperature extremes analysis will require a GPU as it generates several embeddings.
 
-## Land Seas Analysis
+## Land Sea Analysis
 
 You can run the land sea analysis by running the below: 
 
@@ -30,3 +30,12 @@ You can run the land sea analysis by running the below:
     ```
 
 2.`./scripts/landsea.sh` 
+
+## Temperature Extremes Analysis
+
+Before running this analyis, you must ensure that you're able to download data via the CDA API, as the percentiles are downloaded during the script. To do this, you'll need to create an account, and store a .cdsapirc file in the root folder of your machine. Instructions [here](https://cds.climate.copernicus.eu/how-to-api).
+
+Once this is done, you can run:
+    ```sh
+    ./scripts/tempextremes.sh
+    ```
