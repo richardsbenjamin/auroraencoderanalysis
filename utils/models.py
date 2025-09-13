@@ -5,6 +5,8 @@ import dataclasses
 import torch
 from aurora import Aurora, Batch, Metadata
 from aurora import rollout as aurora_rollout
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
 
@@ -47,6 +49,31 @@ def get_aurora_model(device: Device) -> Aurora:
     model = model.to(device)
     return model
 
+def get_train_test_split(
+        test_lon_min: float,
+        test_lon_max: float,
+        patch_center_lon: ndarray,
+        y: ndarray,
+        embedding: ndarray,
+    ) -> dict:
+    is_test_region = ((patch_center_lon >= test_lon_min) & (patch_center_lon <= test_lon_max)).ravel()
+
+    is_training_region = ~is_test_region
+
+    X_train = embedding[:, is_training_region].T
+    y_train = y[is_training_region]
+
+    X_test = embedding[:, is_test_region].T
+    y_test = y[is_test_region]
+
+    return {
+        "X_train": X_train,
+        "y_train": y_train,
+        "X_test": X_test,
+        "y_test": y_test,
+        "is_test_region": is_test_region,
+    }
+
 def run_aurora(model: Aurora, data: Batch, eval_steps: int, device: Device) -> Batch:
     with torch.inference_mode():
         preds = [pred.to(device) for pred in aurora_rollout(model, data, steps=eval_steps)]
@@ -68,4 +95,14 @@ def run_encoder(aurora_model: Aurora, batch: Batch) -> ndarray:
     # Get full embedding
     full_embedding = aurora_model.encoder(transformed_batch, aurora_model.timestep)
     return full_embedding.cpu().detach().numpy()
+
+def run_logistic_regression(train_split_dict: dict) -> dict:
+    clf = LogisticRegression(max_iter=1000)
+    clf.fit(train_split_dict["X_train"], train_split_dict["y_train"])
+    y_pred = clf.predict(train_split_dict["X_test"])
+    return {
+        "model": clf,
+        "y_pred": y_pred,
+        "acc": accuracy_score(train_split_dict["y_test"], y_pred),
+    }
 

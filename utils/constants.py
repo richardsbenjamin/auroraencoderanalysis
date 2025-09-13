@@ -25,4 +25,19 @@ VARS = {
             'msl': 'mean_sea_level_pressure',
         },
     },
+    "era5": {
+        "surf": [
+            "2m_temperature",
+            "10m_u_component_of_wind",
+            "10m_v_component_of_wind",
+            "mean_sea_level_pressure",
+        ],
+        "atmos": [
+            "temperature",
+            "u_component_of_wind",
+            "v_component_of_wind",
+            "specific_humidity",
+            "geopotential",
+        ],
+    },
 }

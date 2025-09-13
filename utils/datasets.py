@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import pickle
+
 import numpy as np
 import xarray as xr
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from auroraencoderanalysis._typing import Dataset, ndarray
+    from auroraencoderanalysis._typing import Any, Dataset, ndarray
 
 
 def get_init_dataset(
@@ -68,6 +70,14 @@ def get_step_dataset(
     )
     return step
 
+def pickle_dump(obj: Any, name: str) -> None:
+    with open(name, "wb") as f:
+        pickle.dump(obj, f)
+
+def pickle_read(name: str) -> None:
+    with open(name, "rb") as f:
+        return pickle.load(f)
+
 def read_edh(edh_path: str) -> Dataset:
     return xr.open_dataset(
         edh_path,
@@ -75,4 +85,22 @@ def read_edh(edh_path: str) -> Dataset:
         chunks={"time": 1},
         engine="zarr",
     )
+
+def reduce_mask(land_sea_mask: ndarray, patch_size: int) -> ndarray:
+    n_lat_patches = land_sea_mask.shape[0] // patch_size
+    n_lon_patches = land_sea_mask.shape[1] // patch_size
+    land_sea_mask_patched = np.zeros((n_lat_patches, n_lon_patches), dtype=np.int8)
+    for i in range(n_lat_patches):
+        for j in range(n_lon_patches):
+            lat_slice = slice(i * patch_size, (i+1) * patch_size)
+            lon_slice = slice(j * patch_size, (j+1) * patch_size)
+            patch_data = land_sea_mask[lat_slice, lon_slice]
+
+            mean_val = np.mean(patch_data)
+            if mean_val >= 0.5:
+                land_sea_mask_patched[i, j] = 1
+            else:
+                land_sea_mask_patched[i, j] = 0
+
+    return land_sea_mask_patched
 
