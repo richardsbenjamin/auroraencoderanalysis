@@ -7,6 +7,7 @@ import cdsapi
 import numpy as np
 import xarray as xr
 import zipfile
+from pandas import to_datetime
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
 
@@ -44,6 +45,7 @@ def get_init_dataset(
         n_levels: int,
         lats: ndarray,
         lons: ndarray,
+        time_encoding: dict,
     ) -> Dataset:
     n_lats = len(lats)
     n_lons = len(lons)
@@ -65,6 +67,8 @@ def get_init_dataset(
             "lon": lons,
         }
     )
+    ds["time"].encoding["units"] = time_encoding["units"]
+    ds["time"].encoding["dtype"] = time_encoding["dtype"]
     ds = ds.chunk({"time": 1, "embed": n_embed, "lat": n_lats, "lon": n_lons})
     return ds
 

@@ -56,7 +56,8 @@ def generate_embeddings(arg_parser: ArgumentParser) -> None:
     n_lats = len(lats)
     n_lons = len(lons)
     n_levels = arg_parser.n_embed_levels
-    output_ds = get_init_dataset(n_embed, n_levels, lats, lons)
+    time_encoding = edh_atmos_data["valid_time"].encoding
+    output_ds = get_init_dataset(n_embed, n_levels, lats, lons, time_encoding)
     output_ds.to_zarr(arg_parser.output_zarr_path, mode="w")
 
     # Main loop to download data, run encoding and export zarr
