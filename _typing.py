@@ -1,4 +1,4 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from typing import Any, TYPE_CHECKING
 
 from aurora import Aurora, Batch
@@ -14,6 +14,7 @@ __all__ = [
     "DataArray",
     "Dataset",
     "Device",
+    "Namespace",
     "TYPE_CHECKING",
     "ndarray",
 ]

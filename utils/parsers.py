@@ -1,5 +1,34 @@
+from __future__ import annotations
+
 from argparse import ArgumentParser
 
+from auroraencoderanalysis._typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from auroraencoderanalysis._typing import Namespace
+
+ATMOS_INSTABILITY_PARSER_ARGS = {
+    "levels-path": {
+        "type": str,
+        "required": True,
+        "help": "Zarr path to ERA5 levels inputs file for the Aurora model."
+    },
+    "output-zarr": {
+        "type": str,
+        "required": True,
+        "help": "Output zarr to save the mask."
+    },
+    "start-date": {
+        "type": str,
+        "required": True,
+        "help": "Start date for the ERA5 dataset given in format YYY-MM-DD."
+    },
+    "end-date": {
+        "type": str,
+        "required": True,
+        "help": "End date for the ERA5 dataset given in format YYY-MM-DD."
+    },
+}
 
 GEN_EMBEDDINGS_PARSER_ARGS = {
     "static-path": {
@@ -116,7 +145,7 @@ TEMP_EXTREMES_PARSER_ARGS = {
 }
 
 
-def get_arg_parser(description: str, args_dict: dict) -> ArgumentParser:
+def get_arg_parser(description: str, args_dict: dict) -> Namespace:
     arg_parser = ArgumentParser(description=description)
     for arg, arg_params in args_dict.items():
         arg_parser.add_argument(
@@ -128,19 +157,25 @@ def get_arg_parser(description: str, args_dict: dict) -> ArgumentParser:
     run_args = arg_parser.parse_args()
     return run_args
 
-def get_gen_embeddings_parser() -> ArgumentParser:
+def get_calc_atmos_instability_mask_parser() -> Namespace:
+    return get_arg_parser(
+        description="Calculate the atmospheric instability mask for the given dates.",
+        args_dict=ATMOS_INSTABILITY_PARSER_ARGS,
+    )
+
+def get_gen_embeddings_parser() -> Namespace:
     return get_arg_parser(
         description="Generate encoder emebeddings for specific dates.",
         args_dict=GEN_EMBEDDINGS_PARSER_ARGS,
     )
 
-def get_land_sea_parser() -> ArgumentParser:
+def get_land_sea_parser() -> Namespace:
     return get_arg_parser(
         description="Execute land sea analysis on the encoder embeddings.",
         args_dict=LAND_SEA_PARSER_ARGS,
     )
 
-def get_temp_extremes_parser() -> ArgumentParser:
+def get_temp_extremes_parser() -> Namespace:
     return get_arg_parser(
         description="Execute land sea analysis on the encoder embeddings.",
         args_dict=TEMP_EXTREMES_PARSER_ARGS,
