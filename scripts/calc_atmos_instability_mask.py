@@ -74,7 +74,19 @@ def calc_atmos_instability_mask(arg_parser: Namespace) -> None:
         if var in edh_atmos_data:
             edh_atmos_data[var].encoding.clear()
 
-    edh_atmos_data[["k_gt_20", "k_gt_35"]].to_zarr(arg_parser.output_zarr)
+    k_gt_20_clean = edh_atmos_data["k_gt_20"]
+    k_gt_35_clean = edh_atmos_data["k_gt_35"]
+
+    new_ds = xr.Dataset({
+        "k_gt_20": k_gt_20_clean,
+        "k_gt_35": k_gt_35_clean
+    })
+
+    for coord_name in new_ds.coords:
+        if 'compressors' in new_ds[coord_name].encoding:
+            new_ds[coord_name].encoding.pop('compressors', None)
+
+    new_ds.to_zarr(arg_parser.output_zarr, mode="w")
 
 
 if __name__ == "__main__":
