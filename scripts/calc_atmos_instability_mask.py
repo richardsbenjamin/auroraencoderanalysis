@@ -70,7 +70,7 @@ def calc_atmos_instability_mask(arg_parser: Namespace) -> None:
     edh_atmos_data["k_gt_20"] = (edh_atmos_data["k_index"] > 20).astype(np.int8)
     edh_atmos_data["k_gt_35"] = (edh_atmos_data["k_index"] > 35).astype(np.int8)
 
-    edh_atmos_data[["k_gt_20", "k_gt_35"]].to_zarr(arg_parser.output_zarr)
+    edh_atmos_data[["k_gt_20", "k_gt_35"]].to_zarr(arg_parser.output)
 
 
 if __name__ == "__main__":
