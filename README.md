@@ -21,8 +21,7 @@ Most scripts only require a CPU as they do not rely on using the Aurora model. T
 
 ## Generate embeddings. 
 
-First, we must generate the dataset of latent vectors by running the script below. This requires the 40GB GPU.
-
+1. First, we must generate the dataset of latent vectors by running the script below. This requires the 40GB GPU:
     ```sh 
     ./scripts/generate_embeddings.sh
     ```
@@ -30,33 +29,29 @@ First, we must generate the dataset of latent vectors by running the script belo
 As this can take some time, you may be interested in skipping this step. The dataset has been made publicly available via `gs://aurora-encoder-storage/encoder_embedding_20240713_20241821.zarr`.
 
 ## Land-Sea Analysis
-
-    ```sh
-    ./scripts/landsea.sh
-    ```
+   
+   1. To run the land-sea analysis:
+      ```sh
+      ./scripts/landsea.sh
+      ```
 
 ## Extreme Temperature Analysis
 
-Before running, you must ensure that you're able to download data via the CDA API, as the percentiles are downloaded during the script. To do this, you'll need to create an account, and store a .cdsapirc file in the root folder of your machine. Instructions [here](https://cds.climate.copernicus.eu/how-to-api).
-
-Once this is done, you can run:
+1. Before running, you must ensure that you're able to download data via the CDA API, as the percentiles are downloaded during the script. To do this, you'll need to create an account, and store a .cdsapirc file in the root folder of your machine. Instructions [here](https://cds.climate.copernicus.eu/how-to-api).
+   Once this is done, you can run:
     ```sh
     ./scripts/tempextremes.sh
     ```
 
 ## Atmospheric Instability
 
-Before running, the atmospheric instability masks must be generated. 
-
+1. Before running, the atmospheric instability masks must be generated. 
     ```sh 
     ./scripts/calc_atmos_instability_mask.sh
     ```
 
-Again, this dataset has also been made publicly available `gs://aurora-encoder-storage/atmos_instability_masks.zarr`.
-
-
-Then,
-
+    Again, this dataset has also been made publicly available `gs://aurora-encoder-storage/atmos_instability_masks.zarr`.
+2. Then:
     ```sh 
     ./scripts/atmospheric_instability.sh
     ```
