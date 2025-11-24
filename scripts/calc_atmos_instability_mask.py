@@ -4,10 +4,7 @@ import numpy as np
 import xarray as xr
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
-from auroraencoderanalysis.utils.constants import LEVELS, VARS
-from auroraencoderanalysis.utils.datasets import get_step_dataset, get_init_dataset, read_edh
-from auroraencoderanalysis.utils.latlon import reduce_lon_lat
-from auroraencoderanalysis.utils.models import get_aurora_batch, get_aurora_model, run_encoder
+from auroraencoderanalysis.utils.datasets import read_edh
 from auroraencoderanalysis.utils.parsers import get_calc_atmos_instability_mask_parser
 
 if TYPE_CHECKING:

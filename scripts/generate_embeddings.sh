@@ -11,11 +11,11 @@ OUTPUT_FILE="${MODULE_DIR}/outputs/generate_embeddings.out"
 STATIC_PATH="${MODULE_DIR}/data/static.nc"
 SINGLES_PATH="https://data.earthdatahub.destine.eu/era5/reanalysis-era5-single-levels-v0.zarr"
 LEVELS_PATH="https://data.earthdatahub.destine.eu/era5/reanalysis-era5-pressure-levels-v0.zarr"
-OUTPUT_ZARR_PATH="gs://aurora-encoder-storage/test_run.zarr"
+OUTPUT_ZARR_PATH="gs://aurora-encoder-storage/encoder_embedding_20240713_20241821.zarr"
 
 # Dates
-START_DATE="2022-01-01T00:00"
-END_DATE="2022-01-06T00:00"
+START_DATE="2024-07-13T18:00"
+END_DATE="2024-08-21T00:00"
 
 # Encoder variables
 PATCH_SIZE="4"

@@ -1,80 +1,91 @@
 from __future__ import annotations
 
+import gcsfs
+import joblib
+import matplotlib.pyplot as plt
 import numpy as np
-import torch
 import xarray as xr
+from sklearn.decomposition import PCA
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
-from auroraencoderanalysis.utils.constants import VARS
-from auroraencoderanalysis.utils.datasets import pickle_dump, reduce_mask
+from auroraencoderanalysis.utils.cav import (
+    get_concept_res,
+    get_correlation_analysis,
+    get_model_and_concept_vector,
+)
+from auroraencoderanalysis.utils.datasets import prepare_x, reduce_mask
 from auroraencoderanalysis.utils.latlon import reduce_lon_lat
 from auroraencoderanalysis.utils.models import (
-    get_aurora_batch,
-    get_aurora_model,
     get_train_test_split,
-    run_encoder,
     run_logistic_regression,
 )
 from auroraencoderanalysis.utils.parsers import get_land_sea_parser
 from auroraencoderanalysis.utils.plotting import plot_map
 
 if TYPE_CHECKING:
-    from auroraencoderanalysis._typing import ArgumentParser
+    from auroraencoderanalysis._typing import Namespace
 
 
-def run_land_sea_analysis(arg_parser: ArgumentParser) -> None:
-    # Load model
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    aurora_model = get_aurora_model(device)
-    
+def plot_pca(pca_res: dict, mask: np.ndarray, save_path: str) -> None:
+    pca = pca_res["pca_model"]
+    pca_transform = pca_res["pca_transform"]
+    plt.figure(figsize=(10, 6))
+    scatter = plt.scatter(pca_transform[:, 0], pca_transform[:, 1],
+                        c=mask, cmap='viridis', alpha=0.6, s=2)
+    plt.xlabel('PC1 ({:.2f}% Var)'.format(pca.explained_variance_ratio_[0]*100))
+    plt.ylabel('PC2 ({:.2f}% Var)'.format(pca.explained_variance_ratio_[1]*100))
+    plt.title('Land vs. Ocean')
+    plt.savefig(save_path, format="jpeg", dpi=300)
+
+def run_pca(x: np.ndarray) -> np.ndarray:
+    pca = PCA(n_components=2)
+    return {
+        "pca_model": pca,
+        "pca_transform": pca.fit_transform(x.T),
+    }
+
+def run_land_sea_analysis(arg_parser: Namespace) -> None:
+    # Read data from Google bucket
+    fs = gcsfs.GCSFileSystem(token="anon")
+    store = fs.get_mapper(arg_parser.embeddings_path)
+    aurora_embeddings = xr.open_zarr(store, consolidated=True)
+    surf_embeddings = aurora_embeddings["surface_latent"].sel(time=slice(arg_parser.start_date, arg_parser.end_date))
+
+    # Static data
+    store = fs.get_mapper(arg_parser.static_path)
+    static_data = xr.open_zarr(store, consolidated=True)
+
     # Get land-sea mask and reduce to patches
-    static = xr.open_dataset(arg_parser.static_path)
-    land_sea_mask = static["lsm"].values.squeeze()
+    land_sea_mask = static_data["lsm"].squeeze().compute()
     land_sea_mask_patched = reduce_mask(land_sea_mask, arg_parser.patch_size)
-
-    # ERA5 dataset and get initial conditions
-    era5_ds = xr.open_zarr(arg_parser.era5_zarr_path)
-    ic = era5_ds.sel(
-        time=slice(arg_parser.start_date, arg_parser.end_date),
-    )
+    y_mask = np.tile(land_sea_mask_patched.ravel(), surf_embeddings.time.shape[0])
 
     # Get lat/lon centres
-    patch_center_lat, patch_center_lon = reduce_lon_lat(
-        arg_parser.patch_size,
-        era5_ds.latitude.values,
-        era5_ds.longitude.values,
-    )
+    lat_patched, lon_patched = reduce_lon_lat(1, surf_embeddings.lat, surf_embeddings.lon)
     
-    # Run encoder
-    land_sea_batch = get_aurora_batch(
-        ic[VARS["era5"]["surf"]],
-        ic[VARS["era5"]["atmos"]],
-        static,
-    )
-    full_embedding = run_encoder(aurora_model, land_sea_batch)
+    # Prepare X
+    X_ls = prepare_x(surf_embeddings)
 
-    # Reconstruct surface/atmos embeddings
-    reshaped_embedding = full_embedding.reshape(1, 4, 64800, 512).squeeze()
-    surf_embedding = reshaped_embedding[0].transpose(1, 0)
+    # PCA
+    pca_res = run_pca(X_ls)
+    plot_pca(pca_res, y_mask, f"{arg_parser.output_dir}/land_sea_pca_plot.jpeg")
     
-    # Get train/test split
+    # Logistic regression
     train_split_dict = get_train_test_split(
         arg_parser.test_lon_min,
         arg_parser.test_lon_max,
-        patch_center_lon,
-        land_sea_mask_patched.ravel(),
-        surf_embedding,
+        lon_patched,
+        y_mask,
+        X_ls,
     )
-
-    # Run the logistic regression
     reg_res = run_logistic_regression(train_split_dict)
-    pickle_dump(reg_res, arg_parser.output_path)
+    joblib.dump(reg_res, f"{arg_parser.output_dir}/land_sea_log_res.pkl")
 
     # Plot classification errors
     is_misclassified = (reg_res["y_pred"] != train_split_dict["y_test"])
     region_patch_indices = np.where(train_split_dict["is_test_region"])[0]
-    region_center_lons = patch_center_lon.ravel()[region_patch_indices]
-    region_center_lats = patch_center_lat.ravel()[region_patch_indices]
+    region_center_lons = lon_patched.ravel()[region_patch_indices]
+    region_center_lats = lat_patched.ravel()[region_patch_indices]
     error_lons = region_center_lons[is_misclassified]
     error_lats = region_center_lats[is_misclassified]
 
@@ -89,7 +100,11 @@ def run_land_sea_analysis(arg_parser: ArgumentParser) -> None:
         export_name="landsea_log_reg_errors.jpeg",
     )
 
-
+    # CAV analysis
+    log_model, concept_vector = get_model_and_concept_vector(reg_res)
+    ls_concept_res = get_concept_res(log_model, X_ls.T, concept_vector)
+    corr_analysis = get_correlation_analysis(ls_concept_res)
+    joblib.dump(corr_analysis, f"{arg_parser.output_dir}/land_sea_cav_corr_res.pkl")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,41 @@ from auroraencoderanalysis._typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from auroraencoderanalysis._typing import Namespace
 
+
 ATMOS_INSTABILITY_PARSER_ARGS = {
+    "mask-path": {
+        "type": str,
+        "required": True,
+        "help": "Zarr path to the atmospheric instability mask.",
+    },
+    "start-date": {
+        "type": str,
+        "required": True,
+        "help": "Start date for the analysis given in format YYY-MM-DD."
+    },
+    "end-date": {
+        "type": str,
+        "required": True,
+        "help": "End date for the analysis given in format YYY-MM-DD."
+    },
+    "patch-size": {
+        "type": int,
+        "required": True,
+        "help": "The patch size of the encoder."
+    },
+    "embeddings-path": {
+        "type": str,
+        "required": True,
+        "help": "Zarr path to where the Aurora embeddings are stored."
+    },
+    "output-dir": {
+        "type": str,
+        "required": True,
+        "help": "Output path where results are saved."
+    },
+}
+
+ATMOS_INSTABILITY_MASK_PARSER_ARGS = {
     "levels-path": {
         "type": str,
         "required": True,
@@ -79,15 +113,15 @@ GEN_EMBEDDINGS_PARSER_ARGS = {
 }
 
 LAND_SEA_PARSER_ARGS = {
+    "embeddings-path": {
+        "type": str,
+        "required": True,
+        "help": "Zarr path to where the Aurora embeddings are stored."
+    },
     "static-path": {
         "type": str,
         "required": True,
         "help": "Path to static inputs file for the Aurora model."
-    },
-    "output-path": {
-        "type": str,
-        "required": True,
-        "help": "Output directory to save images and output data."
     },
     "start-date": {
         "type": str,
@@ -99,11 +133,6 @@ LAND_SEA_PARSER_ARGS = {
         "required": True,
         "help": "End date for the ERA5 dataset given in format YYY-MM-DD."
     },
-    "era5-zarr-path": {
-        "type": str,
-        "required": True,
-        "help": "The zarr path for the ERA5 data."
-    },
     "patch-size": {
         "type": int,
         "required": True,
@@ -112,35 +141,60 @@ LAND_SEA_PARSER_ARGS = {
     "test-lon-min": {
         "type": int,
         "required": True,
-        "help": "The minimum longitude to define the test region for the logistic regression."
+        "help": "The longitude value determining the beginning of the test region."
     },
     "test-lon-max": {
         "type": int,
         "required": True,
-        "help": "The maximum longitude to define the test region for the logistic regression."
+        "help": "The longitude value determining the end of the test region."
+    },
+    "output-dir": {
+        "type": str,
+        "required": True,
+        "help": "Output path where results are saved."
     },
 }
 
 TEMP_EXTREMES_PARSER_ARGS = {
-    "static-path": {
+    "embeddings-path": {
         "type": str,
         "required": True,
-        "help": "Path to static inputs file for the Aurora model."
+        "help": "Zarr path to where the Aurora embeddings are stored."
     },
-    "output-path": {
+    "singles-path": {
         "type": str,
         "required": True,
-        "help": "Output directory to save images and output data."
+        "help": "Zarr path to the ERA5 single level variables. Will likely throw error if not EDH."
     },
-    "era5-zarr-path": {
+    "start-date": {
         "type": str,
         "required": True,
-        "help": "The zarr path for the ERA5 data."
+        "help": "Start date for the extreme events given in format YYY-MM-DD."
+    },
+    "end-date": {
+        "type": str,
+        "required": True,
+        "help": "End date for the extreme events given in format YYY-MM-DD."
+    },
+    "percentile-year": {
+        "type": str,
+        "required": True,
+        "help": "Year used for selecting percentiles from the CDSAPI."
+    },
+    "percentiles": {
+        "type": str,
+        "required": True,
+        "help": "Comma separated percentile levels."
     },
     "patch-size": {
         "type": int,
         "required": True,
         "help": "The patch size of the encoder."
+    },
+    "output-dir": {
+        "type": str,
+        "required": True,
+        "help": "Output path where results are saved."
     },
 }
 
@@ -157,10 +211,16 @@ def get_arg_parser(description: str, args_dict: dict) -> Namespace:
     run_args = arg_parser.parse_args()
     return run_args
 
-def get_calc_atmos_instability_mask_parser() -> Namespace:
+def get_atmos_instability_parser() -> Namespace:
     return get_arg_parser(
         description="Calculate the atmospheric instability mask for the given dates.",
         args_dict=ATMOS_INSTABILITY_PARSER_ARGS,
+    )
+
+def get_calc_atmos_instability_mask_parser() -> Namespace:
+    return get_arg_parser(
+        description="Calculate the atmospheric instability mask for the given dates.",
+        args_dict=ATMOS_INSTABILITY_MASK_PARSER_ARGS,
     )
 
 def get_gen_embeddings_parser() -> Namespace:

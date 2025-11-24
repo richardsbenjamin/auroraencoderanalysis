@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import pickle
-import shutil
 
-import cdsapi
 import numpy as np
 import xarray as xr
-import zipfile
 from pandas import to_datetime
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
@@ -14,31 +11,6 @@ from auroraencoderanalysis._typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from auroraencoderanalysis._typing import Any, DataArray, Dataset, ndarray
 
-
-def download_europe_percentiles(output_path: str) -> Dataset:
-    dataset = "sis-temperature-statistics"
-    request = {
-        "variable": "maximum_temperature",
-        "period": "year",
-        "statistic": [
-            "75th_percentile",
-            "90th_percentile",
-            "95th_percentile",
-            "99th_percentile"
-        ],
-        "experiment": ["rcp4_5"],
-        "ensemble_statistic": ["ensemble_members_average"]
-    }
-
-    client = cdsapi.Client()
-    target = f"{output_path}/temp"
-    client.retrieve(dataset, request, target=target)
-    
-    # Unzip
-    with zipfile.ZipFile(target, 'r') as zip_ref:
-        zip_ref.extractall(f"{output_path}/temperature_percentiles")
-
-    shutil.rmtree(target)
 
 def get_init_dataset(
         n_embed: int,
@@ -109,6 +81,18 @@ def pickle_dump(obj: Any, name: str) -> None:
 def pickle_read(name: str) -> None:
     with open(name, "rb") as f:
         return pickle.load(f)
+    
+def prepare_x(embeddings: xr.Dataset, mask: ndarray | None = None) -> np.ndarray:
+    X = []
+    for i in range(embeddings.time.shape[0]):
+        embedding = embeddings.isel(time=i)
+        embedding = embedding.data.reshape(512, -1)
+        if mask is not None:
+            embedding = embedding[:, mask]
+        X.append(embedding)
+    X = np.stack(X).transpose(1, 0, 2).reshape(512, -1)
+    X = X.compute()
+    return X
 
 def read_edh(edh_path: str) -> Dataset:
     return xr.open_dataset(

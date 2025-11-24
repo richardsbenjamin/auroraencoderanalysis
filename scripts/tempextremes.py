@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import joblib
+import shutil
+import zipfile
+
+import cdsapi
+import gcsfs
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
 import xarray as xr
 from matplotlib.colors import ListedColormap
 from pandas import DataFrame
@@ -11,19 +16,19 @@ from sklearn.metrics import precision_score, recall_score
 from sklearn.model_selection import train_test_split
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
-from auroraencoderanalysis.utils.constants import VARS
+from auroraencoderanalysis.utils.cav import (
+    get_concept_res,
+    get_correlation_analysis,
+    get_model_and_concept_vector,
+)
 from auroraencoderanalysis.utils.datasets import (
-    download_europe_percentiles,
+    prepare_x,
+    read_edh,
     reduce_field,
     reduce_percentiles,
 )
 from auroraencoderanalysis.utils.latlon import reduce_lon_lat
-from auroraencoderanalysis.utils.models import (
-    get_aurora_batch,
-    get_aurora_model,
-    run_encoder,
-    run_logistic_regression,
-)
+from auroraencoderanalysis.utils.models import run_logistic_regression
 from auroraencoderanalysis.utils.parsers import get_temp_extremes_parser
 
 if TYPE_CHECKING:
@@ -37,53 +42,52 @@ COLOURS = [
     '#CC0000',
     '#8B0000',
 ]
-HEATWAVE_DATES = [
-    "2022-07-14T12:00",
-    "2022-07-14T18:00",
-    "2022-07-28T12:00",
-    "2022-07-28T18:00",
-    "2022-07-19T12:00",
-    "2022-07-19T18:00",
-    "2019-06-28T12:00",
-    "2019-06-28T18:00",
-    "2019-06-29T12:00",
-    "2019-06-29T18:00",
-]
 
+def get_europe_percentiles(percentiles: str, output_path: str) -> Dataset:
+    dataset = "sis-temperature-statistics"
+    request = {
+        "variable": "maximum_temperature",
+        "period": "year",
+        "statistic": [
+            f"{p}th_percentile" for p in percentiles
+        ],
+        "experiment": ["rcp4_5"],
+        "ensemble_statistic": ["ensemble_members_average"]
+    }
 
-def get_regression_inputs(
-        aurora_model: Aurora,
-        era5_ds: Dataset,
-        static: Dataset,
-        is_valid_percentile: ndarray,
-    ) -> ndarray:
-    # Construct regression inputs
-    X = []
-    for heatwave_date in HEATWAVE_DATES:
-        # Prepare initial conditions
-        ic_end = np.datetime64(heatwave_date)
-        ic_start = np.datetime64(ic_end) - np.timedelta64(1, "6h")
-        ic = era5_ds.sel(time=slice(ic_start, ic_end))
+    client = cdsapi.Client()
+    target = f"{output_path}/temp"
+    client.retrieve(dataset, request, target=target)
+    
+    # Unzip
+    with zipfile.ZipFile(target, 'r') as zip_ref:
+        zip_ref.extractall(f"{output_path}/temperature_percentiles")
 
-        # Get encoder output
-        heatwave_batch = get_aurora_batch(
-            ic[VARS["era5"]["surf"]],
-            ic[VARS["era5"]["atmos"]],
-            static,
+    shutil.rmtree(target)
+
+def get_percentile_maximums(percentiles: list, percentile_year: str, output_dir: str) -> None:
+    # Extract maximums
+    percentile_data = {
+        f"p{p}": (
+            xr.open_dataset(f"{output_dir}/temperature_percentiles/p{p}_Tmax_Yearly_rcp45_mean_v1.0.nc")
+            .sel(time=percentile_year)[f"p{p}_Tmax_Yearly"]
         )
-        full_embedding = run_encoder(aurora_model, heatwave_batch)
+        for p in percentiles
+    }
+    return percentile_data
 
-        # Reshape and extract
-        reshaped_embedding = full_embedding.reshape(1, 4, 64800, 512).squeeze()
-        surf_embedding = reshaped_embedding[0].transpose(1, 0)
-        X.append(surf_embedding[:, is_valid_percentile.ravel()])
-
-    X = np.stack(X).transpose(1, 0, 2).reshape(512, -1)
-    return X
-
-def get_regression_labels(era5_ds: Dataset, patch_level_percentiles: dict) -> dict:
+def get_regression_labels(
+        era5_ds: Dataset,
+        patch_level_percentiles: dict,
+        start_path: str,
+        end_path: str,
+        is_valid_percentile: ndarray,
+    ) -> dict:
     # Construct regression labels
-    temp_2m = era5_ds["2m_temperature"].sel(time=HEATWAVE_DATES)
+    temp_2m = (
+        era5_ds["t2m"].sel(valid_time=slice(start_path, end_path))
+        .isel(valid_time=slice(None, None, 6))
+    )
     temp_2m = temp_2m.assign_coords(longitude=((temp_2m.longitude % 360) - 180))
 
     is_extreme_all_p = {}
@@ -98,7 +102,7 @@ def get_regression_labels(era5_ds: Dataset, patch_level_percentiles: dict) -> di
 
     return is_extreme_all_p
 
-def get_pca_transform(is_extreme_all_p: dict) -> ndarray:
+def get_pca_transform(X: ndarray, is_extreme_all_p: dict) -> ndarray:
     pca = PCA(n_components=2)
     pca_p_transform = pca.fit_transform(X.T)
 
@@ -148,7 +152,6 @@ def get_percentiles_logistic_regression(
             test_size=0.2,
             stratify=y,
         )
-
         train_test_split_dict = {
             "X_train": X_train,
             "y_train": y_train,
@@ -162,7 +165,6 @@ def get_percentiles_logistic_regression(
 
 def get_scores(percentile_regs: dict, percentile_splits: dict) -> DataFrame:
     acc_df = DataFrame()
-
     acc_df["percentile"] = percentile_regs.keys()
     acc_df["acc"] = [percentile_regs[p]["acc"] for p in percentile_regs.keys()]
     acc_df["prec"] = [
@@ -175,15 +177,16 @@ def get_scores(percentile_regs: dict, percentile_splits: dict) -> DataFrame:
     ]
 
 def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
-    # Load model
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    aurora_model = get_aurora_model(device)
+    percentiles = [p.strip() for p in arg_parser.percentiles.split(",") if p.strip()]
 
-    # ERA5 dataset and get initial conditions
-    era5_ds = xr.open_zarr(arg_parser.era5_zarr_path)
+    # Read data from Google bucket
+    fs = gcsfs.GCSFileSystem(token="anon")
+    store = fs.get_mapper(arg_parser.embeddings_path)
+    aurora_embeddings = xr.open_zarr(store, consolidated=True)
+    surf_embeddings = aurora_embeddings["surface_latent"].sel(time=slice(arg_parser.start_date, arg_parser.end_date))
 
-    # Get land-sea mask and reduce to patches
-    static = xr.open_dataset(arg_parser.static_path)
+    # ERA5 data
+    era5_ds = read_edh(arg_parser.singles_path)
 
     # Lon/lat variables
     patch_center_lat, patch_center_lon = reduce_lon_lat(arg_parser.patch_size, era5_ds.latitude.values[:-1], era5_ds.longitude.values)
@@ -191,18 +194,12 @@ def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
     patch_lon_bounds = np.stack([patch_center_lon - 0.5, patch_center_lon + 0.5], axis=-1)
 
     # Download percentiles and read
-    download_europe_percentiles(arg_parser.output_path)
-    percentile_year = "2020-01-01"
-    percentiles = [75, 90, 95, 99]
-    percentile_data = {
-        f"p{p}": (
-            xr.open_dataset(f"{arg_parser.output_path}/temperature_percentiles/p{p}_Tmax_Yearly_rcp45_mean_v1.0.nc")
-            .sel(time=percentile_year)[f"p{p}_Tmax_Yearly"]
-        )
-        for p in percentiles
-    }
+    get_europe_percentiles(percentiles, arg_parser.output_dir)
+    percentile_data = get_percentile_maximums(
+        percentiles, arg_parser.percentile_year, arg_parser.output_dir,
+    )
 
-    # Reduce the percentiles into the patches
+    # Reduce the percentiles into patches
     patch_level_percentiles = {
         p: reduce_percentiles(p_data, patch_lat_bounds, patch_lon_bounds)
         for p, p_data in percentile_data.items()
@@ -210,22 +207,35 @@ def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
     # There are many nans, only keep valid values
     # Each percentile has the same nans so just use p99's
     is_valid_percentile = ~np.isnan(patch_level_percentiles["p99"])
+    
+    X_temp_extremes = prepare_x(surf_embeddings, is_valid_percentile.ravel())
 
     # Construct regression inputs/outputs
-    X = get_regression_inputs(aurora_model, era5_ds, static, is_valid_percentile)
-    is_extreme_all_p = get_regression_labels(era5_ds, patch_level_percentiles)
+    is_extreme_all_p = get_regression_labels(
+        era5_ds, patch_level_percentiles,
+        arg_parser.start_path, arg_parser.end_path,
+        is_valid_percentile,
+    )
 
     # Get PCA outputs
-    pca_p_transform, is_p, ratios = get_pca_transform(is_extreme_all_p)
+    pca_p_transform, is_p, ratios = get_pca_transform(X_temp_extremes, is_extreme_all_p)
 
     # Save PCA plot
-    get_pca_plot(pca_p_transform, is_p, ratios)
+    get_pca_plot(pca_p_transform, is_p, ratios, f"{arg_parser.output_dir}/temp_extremes_pca_plot.jpeg")
 
     # Run logistic regression separately for all percentiles
-    percentile_regs, percentile_splits = get_percentiles_logistic_regression(X, is_extreme_all_p, is_extreme_all_p)
-
+    percentile_regs, percentile_splits = get_percentiles_logistic_regression(
+        X_temp_extremes, is_extreme_all_p, is_extreme_all_p,
+    )
     scores_table = get_scores(percentile_regs, percentile_splits)
     scores_table.to_csv(f"{arg_parser.output_path}/scores_table.csv")
+
+    # CAV analysis
+    for p, reg_res in percentile_regs.items():
+        log_model, concept_vector = get_model_and_concept_vector(reg_res)
+        ls_concept_res = get_concept_res(log_model, X_temp_extremes.T, concept_vector)
+        corr_analysis = get_correlation_analysis(ls_concept_res)
+        joblib.dump(corr_analysis, f"{arg_parser.output_dir}/temp_extremes_{p}_cav_corr_res.pkl")
 
 
 if __name__ == "__main__":
