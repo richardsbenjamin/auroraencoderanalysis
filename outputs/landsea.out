@@ -1,0 +1,22 @@
+STARTING PROGRAM
+Read embeddings
+Read static data
+Got LS mask
+Traceback (most recent call last):
+  File "/home/benjamin/miniconda3/envs/auroralatent-1.0/lib/python3.12/site-packages/xarray/core/common.py", line 157, in __float__
+    def __float__(self: Any) -> float:
+
+KeyboardInterrupt
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/benjamin/auroraencoderanalysis/scripts/landsea.py", line 121, in <module>
+    run_land_sea_analysis(run_args)
+  File "/home/benjamin/auroraencoderanalysis/scripts/landsea.py", line 68, in run_land_sea_analysis
+    lat_patched, lon_patched = reduce_lon_lat(1, surf_embeddings.lat, surf_embeddings.lon)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/benjamin/auroraencoderanalysis/utils/latlon.py", line 30, in reduce_lon_lat
+    patch_center_lon[i, j] = np.mean(patch_lons)
+    ~~~~~~~~~~~~~~~~^^^^^^
+ValueError: setting an array element with a sequence.

@@ -45,30 +45,37 @@ def run_pca(x: np.ndarray) -> np.ndarray:
     }
 
 def run_land_sea_analysis(arg_parser: Namespace) -> None:
+    print("STARTING PROGRAM")
     # Read data from Google bucket
     fs = gcsfs.GCSFileSystem(token="anon")
     store = fs.get_mapper(arg_parser.embeddings_path)
     aurora_embeddings = xr.open_zarr(store, consolidated=True)
     surf_embeddings = aurora_embeddings["surface_latent"].sel(time=slice(arg_parser.start_date, arg_parser.end_date))
+    print("Read embeddings")
 
     # Static data
     store = fs.get_mapper(arg_parser.static_path)
     static_data = xr.open_zarr(store, consolidated=True)
+    print("Read static data")
 
     # Get land-sea mask and reduce to patches
     land_sea_mask = static_data["lsm"].squeeze().compute()
     land_sea_mask_patched = reduce_mask(land_sea_mask, arg_parser.patch_size)
     y_mask = np.tile(land_sea_mask_patched.ravel(), surf_embeddings.time.shape[0])
+    print("Got LS mask")
 
     # Get lat/lon centres
     lat_patched, lon_patched = reduce_lon_lat(1, surf_embeddings.lat, surf_embeddings.lon)
+    print("Got lat/lon centres")
     
     # Prepare X
     X_ls = prepare_x(surf_embeddings)
+    print("Prepared X")
 
     # PCA
     pca_res = run_pca(X_ls)
     plot_pca(pca_res, y_mask, f"{arg_parser.output_dir}/land_sea_pca_plot.jpeg")
+    print("PCA plot")
     
     # Logistic regression
     train_split_dict = get_train_test_split(
@@ -80,6 +87,7 @@ def run_land_sea_analysis(arg_parser: Namespace) -> None:
     )
     reg_res = run_logistic_regression(train_split_dict)
     joblib.dump(reg_res, f"{arg_parser.output_dir}/land_sea_log_res.pkl")
+    print("Log reg")
 
     # Plot classification errors
     is_misclassified = (reg_res["y_pred"] != train_split_dict["y_test"])
@@ -105,6 +113,7 @@ def run_land_sea_analysis(arg_parser: Namespace) -> None:
     ls_concept_res = get_concept_res(log_model, X_ls.T, concept_vector)
     corr_analysis = get_correlation_analysis(ls_concept_res)
     joblib.dump(corr_analysis, f"{arg_parser.output_dir}/land_sea_cav_corr_res.pkl")
+    print("CAV analysis")
 
 
 if __name__ == "__main__":
