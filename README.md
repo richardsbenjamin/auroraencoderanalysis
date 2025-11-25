@@ -14,7 +14,7 @@ You'll need to set up the repository and environemnt on your machine. You'll nee
     ```
     activate the environment: 
     ```sh
-    conda activate auroralatent-1.0.yml
+    conda activate auroralatent-1.0
     ```
 
 Most scripts only require a CPU as they do not rely on using the Aurora model. The `generate_embeddings.py` script generates the embeddings and was run using a A100 40GB GPU.  
