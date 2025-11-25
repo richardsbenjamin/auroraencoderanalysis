@@ -6,22 +6,19 @@ MODULE_DIR="${HOME_DIR}/auroraencoderanalysis"
 OUTPUT_DIR="${MODULE_DIR}/outputs"
 
 # Path to catch errors
-OUTPUT_FILE="${OUTPUT_DIR}/landsea.out"
+OUTPUT_FILE="${OUTPUT_DIR}/atmos_instability.out"
 
 # Data paths
+MASK_PATH="gs://aurora-encoder-storage/atmos_instability_masks.zarr"
 EMBEDDINGS_PATH="gs://aurora-encoder-storage/encoder_embedding_20240713_20241821.zarr"
-STATIC_PATH="gs://aurora-encoder-storage/static.zarr"
 
-# Dates (end date needs to be at least 6 hours after start date)
+# Dates
 START_DATE="2024-07-13T18:00:00"
 END_DATE="2024-07-18T18:00:00"
 
-# Test variables
-TEST_LON_MIN=120
-TEST_LON_MAX=210
-
 # Encoder variables
 PATCH_SIZE="4"
+
 
 #############################################################
 cd ${MODULE_DIR}
@@ -32,15 +29,14 @@ if [ -f ${OUTPUT_FILE} ]; then
     rm ${OUTPUT_FILE}
 fi
 
-RUN_CMD="python scripts/landsea.py \
-    --embeddings-path ${EMBEDDINGS_PATH} \
-    --static-path ${STATIC_PATH} \
+RUN_CMD="python scripts/generate_embeddings.py \
+    --mask-path ${MASK_PATH} \
     --start-date ${START_DATE} \
     --end-date ${END_DATE} \
     --patch-size ${PATCH_SIZE} \
-    --test-lon-min ${TEST_LON_MIN} \
-    --test-lon-max ${TEST_LON_MAX} \
+    --embeddings-path ${EMBEDDINGS_PATH} \
     --output-dir ${OUTPUT_DIR}"
+
 
 # If output file is given, redirect output
 if [[ -n "${OUTPUT_FILE}" ]]; then

@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import dataclasses
 
+import numpy as np
 import torch
 from aurora import Aurora, Batch, Metadata
 from aurora import rollout as aurora_rollout
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 from auroraencoderanalysis._typing import TYPE_CHECKING
 
@@ -55,8 +56,13 @@ def get_train_test_split(
         patch_center_lon: ndarray,
         y: ndarray,
         embedding: ndarray,
-    ) -> dict:
+    ) -> None:
     is_test_region = ((patch_center_lon >= test_lon_min) & (patch_center_lon <= test_lon_max)).ravel()
+
+    n = embedding.shape[-1]
+    m = is_test_region.shape[-1]
+
+    is_test_region = np.tile(is_test_region, n // m)
 
     is_training_region = ~is_test_region
 
@@ -104,5 +110,8 @@ def run_logistic_regression(train_split_dict: dict) -> dict:
         "model": clf,
         "y_pred": y_pred,
         "acc": accuracy_score(train_split_dict["y_test"], y_pred),
+        "prec": precision_score(train_split_dict["y_test"], y_pred),
+        "recall": recall_score(train_split_dict["y_test"], y_pred),
+        "is_test_region": train_split_dict.get("is_test_region"),
     }
 
