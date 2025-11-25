@@ -39,3 +39,19 @@ Once this is done, you can run:
     ```sh
     ./scripts/tempextremes.sh
     ```
+
+## Citation
+
+To cite this work, please use the following BibTeX entry:
+
+```bibtex
+@misc{richards2025physicalconsistencyaurorasencoder,
+    title={Physical Consistency of Aurora's Encoder: A Quantitative Study}, 
+    author={Benjamin Richards and Pushpa Kumar Balan},
+    year={2025},
+    eprint={2511.07787},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG},
+    url={https://arxiv.org/abs/2511.07787}, 
+}
+```
