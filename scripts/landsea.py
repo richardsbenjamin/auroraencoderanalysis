@@ -90,8 +90,9 @@ def run_land_sea_analysis(arg_parser: Namespace) -> None:
     print("Log reg")
 
     # Plot classification errors
+    n = len(surf_embeddings.time)
     is_misclassified = (reg_res["y_pred"] != train_split_dict["y_test"])
-    region_patch_indices = np.where(train_split_dict["is_test_region"])[0]
+    region_patch_indices = region_patch_indices = np.where(reg_res["is_test_region"].reshape(n, 64800))[-1]
     region_center_lons = lon_patched.ravel()[region_patch_indices]
     region_center_lats = lat_patched.ravel()[region_patch_indices]
     error_lons = region_center_lons[is_misclassified]
