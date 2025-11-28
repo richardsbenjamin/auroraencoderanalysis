@@ -58,14 +58,13 @@ def get_europe_percentiles(percentiles: str, output_path: str) -> Dataset:
 
     client = cdsapi.Client()
     target = f"{output_path}/temp"
-    os.makedirs(target, exist_ok=True)
     client.retrieve(dataset, request, target=target)
     
     # Unzip
     with zipfile.ZipFile(target, 'r') as zip_ref:
         zip_ref.extractall(f"{output_path}/temperature_percentiles")
 
-    shutil.rmtree(target)
+    os.remove(target)
 
 def get_percentile_maximums(percentiles: list, percentile_year: str, output_dir: str) -> None:
     # Extract maximums
