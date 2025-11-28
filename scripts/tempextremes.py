@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import joblib
 import shutil
 import zipfile
@@ -57,6 +58,7 @@ def get_europe_percentiles(percentiles: str, output_path: str) -> Dataset:
 
     client = cdsapi.Client()
     target = f"{output_path}/temp"
+    os.makedirs(target, exist_ok=True)
     client.retrieve(dataset, request, target=target)
     
     # Unzip
