@@ -14,7 +14,7 @@ STATIC_PATH="gs://aurora-encoder-storage/static.zarr"
 
 # Dates (end date needs to be at least 6 hours after start date)
 START_DATE="2024-07-13T18:00:00"
-END_DATE="2024-07-18T18:00:00"
+END_DATE="2024-07-16T00:00:00"
 
 # Test variables
 TEST_LON_MIN=120
