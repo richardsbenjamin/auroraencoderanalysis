@@ -226,10 +226,10 @@ def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
 
     # Run logistic regression separately for all percentiles
     percentile_regs, percentile_splits = get_percentiles_logistic_regression(
-        X_temp_extremes, is_extreme_all_p, is_extreme_all_p,
+        X_temp_extremes, is_extreme_all_p,
     )
     scores_table = get_scores(percentile_regs, percentile_splits)
-    scores_table.to_csv(f"{arg_parser.output_path}/scores_table.csv")
+    scores_table.to_csv(f"{arg_parser.output_dir}/scores_table.csv")
 
     # CAV analysis
     for p, reg_res in percentile_regs.items():
