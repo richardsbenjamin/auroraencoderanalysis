@@ -14,7 +14,7 @@ ERA5_SINGLES_PATH="https://data.earthdatahub.destine.eu/era5/reanalysis-era5-sin
 
 # Dates (end date needs to be at least 6 hours after start date)
 START_DATE="2024-07-13T18:00:00"
-END_DATE="2024-07-18T18:00:00"
+END_DATE="2024-07-16T00:00:00"
 
 # Other variables
 PERCENTILE_YEAR="2020-01-01"

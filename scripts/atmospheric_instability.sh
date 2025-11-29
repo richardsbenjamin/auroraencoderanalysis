@@ -14,7 +14,7 @@ EMBEDDINGS_PATH="gs://aurora-encoder-storage/encoder_embedding_20240713_20241821
 
 # Dates
 START_DATE="2024-07-13T18:00:00"
-END_DATE="2024-07-18T18:00:00"
+END_DATE="2024-07-16T00:00:00"
 
 # Encoder variables
 PATCH_SIZE="4"
