@@ -29,7 +29,7 @@ if [ -f ${OUTPUT_FILE} ]; then
     rm ${OUTPUT_FILE}
 fi
 
-RUN_CMD="python scripts/generate_embeddings.py \
+RUN_CMD="python scripts/atmospheric_instability.py \
     --mask-path ${MASK_PATH} \
     --start-date ${START_DATE} \
     --end-date ${END_DATE} \
