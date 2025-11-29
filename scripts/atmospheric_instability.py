@@ -89,7 +89,7 @@ def main(arg_parser: Namespace) -> None:
     aurora_embeddings = xr.open_zarr(store, consolidated=True)
 
     atmos_embeddings = aurora_embeddings["atmos_latent"].sel(time=slice(arg_parser.start_date, arg_parser.end_date))
-    atmos_embeddings_values = atmos_embeddings.values # Download data
+    atmos_embeddings_values = atmos_embeddings # Download data
 
     # Get atmospheric instability masks
     atmos_insta_masks = xr.open_zarr(arg_parser.mask_path)
@@ -102,9 +102,9 @@ def main(arg_parser: Namespace) -> None:
     ]
 
     # Select the three different latent levels in the encoder
-    X0 = atmos_embeddings_values[:, :, 0, :, :,].transpose(1, 0, 2, 3).reshape(512, -1)
-    # X1 = atmos_embeddings_values[:, :, 1, :, :,].transpose(1, 0, 2, 3).reshape(512, -1)
-    # X2 = atmos_embeddings_values[:, :, 2, :, :,].transpose(1, 0, 2, 3).reshape(512, -1)
+    X0 = atmos_embeddings_values[:, :, 0, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
+    # X1 = atmos_embeddings_values[:, :, 1, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
+    # X2 = atmos_embeddings_values[:, :, 2, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
 
     # PCA
     pca_res = run_pca(X0)
