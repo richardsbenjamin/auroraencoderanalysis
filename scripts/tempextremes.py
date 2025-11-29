@@ -176,6 +176,7 @@ def get_scores(percentile_regs: dict, percentile_splits: dict) -> DataFrame:
             recall_score(percentile_splits[p]["y_test"], percentile_regs[p]["y_pred"])
             for p in percentile_regs.keys()
     ]
+    return acc_df
 
 def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
     percentiles = [p.strip() for p in arg_parser.percentiles.split(",") if p.strip()]
