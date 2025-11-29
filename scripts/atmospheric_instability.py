@@ -102,7 +102,7 @@ def main(arg_parser: Namespace) -> None:
     ]
 
     # Select the three different latent levels in the encoder
-    X0 = atmos_embeddings_values[:, :, 0, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
+    X0 = atmos_embeddings_values[:, :, 0, :, :,].data.transpose(1, 0, 2, 3).reshape(512, -1).values
     # X1 = atmos_embeddings_values[:, :, 1, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
     # X2 = atmos_embeddings_values[:, :, 2, :, :,].transpose(1, 0, 2, 3).reshape(512, -1).values
 
