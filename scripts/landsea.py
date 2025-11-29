@@ -106,7 +106,7 @@ def run_land_sea_analysis(arg_parser: Namespace) -> None:
         s=50,
         alpha=0.7,
         extent=[-150, 90, -90, 90],
-        export_name="landsea_log_reg_errors.jpeg",
+        export_name=f"{arg_parser.output_dir}/landsea_log_reg_errors.jpeg",
     )
 
     # CAV analysis

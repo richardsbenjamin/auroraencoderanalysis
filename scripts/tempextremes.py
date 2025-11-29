@@ -214,7 +214,7 @@ def run_temperature_extremes_analysis(arg_parser: ArgumentParser) -> None:
     # Construct regression inputs/outputs
     is_extreme_all_p = get_regression_labels(
         era5_ds, patch_level_percentiles,
-        arg_parser.start_path, arg_parser.end_path,
+        arg_parser.start_date, arg_parser.end_date,
         is_valid_percentile,
     )
 
